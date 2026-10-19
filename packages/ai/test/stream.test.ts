@@ -1326,6 +1326,27 @@ describe("Generate E2E Tests", () => {
 		});
 	});
 
+	describe.skipIf(!process.env.ABSTRACT_API_KEY)("Abstract Provider (DeepSeek V4 Flash via OpenAI Responses)", () => {
+		const llm = getModel("abstract", "deepseek-v4-flash:superfast");
+
+		it("should complete basic text generation", { retry: 3 }, async () => {
+			await basicTextGeneration(llm);
+		});
+
+		it("should handle tool calling", { retry: 3 }, async () => {
+			await handleToolCall(llm);
+		});
+
+		it("should handle streaming", { retry: 3 }, async () => {
+			await handleStreaming(llm);
+		});
+
+		// Abstract accepts reasoning effort but does not stream reasoning content, so there is no thinking test.
+		it("should handle multi-turn with reasoning effort and tools", { retry: 3 }, async () => {
+			await multiTurn(llm, { reasoningEffort: "high" });
+		});
+	});
+
 	// =========================================================================
 	// OAuth-based providers (credentials from ~/.pi/agent/oauth.json)
 	// Tokens are resolved at module level (see oauthTokens above)

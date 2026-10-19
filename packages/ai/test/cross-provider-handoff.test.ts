@@ -78,6 +78,10 @@ const PROVIDER_MODEL_PAIRS: ProviderModelPair[] = [
 		model: "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
 		label: "bedrock-claude-sonnet-4-5",
 	},
+	// Abstract
+	{ provider: "abstract", model: "glm-5.3:superfast", label: "abstract-glm-5.3" },
+	{ provider: "abstract", model: "deepseek-v4-flash:superfast", label: "abstract-deepseek-v4-flash" },
+	{ provider: "abstract", model: "kimi-k3:superfast", label: "abstract-kimi-k3" },
 	// xAI
 	{ provider: "xai", model: "grok-4.3", label: "xai-grok-4.3" },
 	// Cerebras

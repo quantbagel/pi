@@ -31,6 +31,7 @@ This table covers providers with a single primary API-key variable. Providers th
 | Provider | Environment variable |
 |---|---|
 | Anthropic | `ANTHROPIC_API_KEY` |
+| Abstract | `ABSTRACT_API_KEY` |
 | Ant Ling | `ANT_LING_API_KEY` |
 | OpenAI | `OPENAI_API_KEY` |
 | DeepSeek | `DEEPSEEK_API_KEY` |

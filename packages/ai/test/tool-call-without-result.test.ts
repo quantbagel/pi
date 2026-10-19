@@ -142,6 +142,14 @@ describe("Tool Call Without Result Tests", () => {
 		});
 	});
 
+	describe.skipIf(!process.env.ABSTRACT_API_KEY)("Abstract Provider", () => {
+		const model = getModel("abstract", "deepseek-v4-flash:superfast");
+
+		it("should filter out tool calls without corresponding tool results", { retry: 3, timeout: 30000 }, async () => {
+			await testToolCallWithoutResult(model);
+		});
+	});
+
 	describe.skipIf(!process.env.XAI_API_KEY)("xAI Provider", () => {
 		const model = getModel("xai", "grok-4.3");
 

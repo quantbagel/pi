@@ -1,6 +1,7 @@
 import { CLASSIFIER_MODELS, IMAGE_MODELS, MODELS } from "../models.generated.ts";
 import { type CreateModelsOptions, createModels, type MutableModels, type Provider } from "../models.ts";
 import type { AnyModel, Api, ClassifierApi, ClassifierModel, ImageApi, ImageModel, Model } from "../types.ts";
+import { abstractProvider } from "./abstract.ts";
 import { amazonBedrockProvider } from "./amazon-bedrock.ts";
 import { antLingProvider } from "./ant-ling.ts";
 import { anthropicProvider } from "./anthropic.ts";
@@ -135,6 +136,7 @@ export function getAllBuiltinModels<TProvider extends BuiltinProvider>(provider:
 /** All built-in providers, freshly constructed. */
 export function builtinProviders(): Provider[] {
 	return [
+		abstractProvider(),
 		amazonBedrockProvider(),
 		antLingProvider(),
 		anthropicProvider(),

@@ -607,4 +607,39 @@ describe("openai-responses max_output_tokens compat", () => {
 
 		expect(capturedPayload?.max_output_tokens).toBeUndefined();
 	});
+
+	it("types input messages when requiresMessageType is true", async () => {
+		const model = getModel("abstract", "glm-5.3:superfast");
+		let capturedPayload: { input?: Array<{ type?: string; role?: string }> } | undefined;
+
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(
+			new Response("data: [DONE]\n\n", {
+				status: 200,
+				headers: { "content-type": "text/event-stream" },
+			}),
+		);
+
+		const stream = streamOpenAIResponses(
+			model,
+			normalizeContext({
+				systemPrompt: "sys",
+				messages: [{ role: "user", content: "hi", timestamp: Date.now() }],
+			}),
+			{
+				apiKey: "sk-test-key",
+				onPayload: (payload) => {
+					capturedPayload = payload as typeof capturedPayload;
+				},
+			},
+		);
+
+		for await (const event of stream) {
+			if (event.type === "done" || event.type === "error") break;
+		}
+
+		expect(capturedPayload?.input?.map((item) => [item.type, item.role])).toEqual([
+			["message", "developer"],
+			["message", "user"],
+		]);
+	});
 });

@@ -228,8 +228,9 @@ export function convertResponsesMessages<TApi extends Api>(
 			reasoning: { effort: effort as NonNullable<ResponseConfigurationUpdateItemParam.Reasoning["effort"]> },
 		} satisfies ResponseConfigurationUpdateItemParam);
 	};
-	const compat = model.compat as { supportsDeveloperRole?: boolean } | undefined;
+	const compat = model.compat as { supportsDeveloperRole?: boolean; requiresMessageType?: boolean } | undefined;
 	const instructionRole = model.reasoning && compat?.supportsDeveloperRole !== false ? "developer" : "system";
+	const messageType = compat?.requiresMessageType ? ({ type: "message" } as const) : {};
 
 	let msgIndex = 0;
 	let sourceIndex = 0;
@@ -240,12 +241,13 @@ export function convertResponsesMessages<TApi extends Api>(
 			if (!isLeadingSystemMessage || includeInitialSystemMessage) {
 				const text = isLeadingSystemMessage ? getSystemMessageText(msg) : renderSystemMessageUpdate(msg);
 				if (text.length > 0) {
-					messages.push({ role: instructionRole, content: sanitizeSurrogates(text) });
+					messages.push({ ...messageType, role: instructionRole, content: sanitizeSurrogates(text) });
 				}
 			}
 		} else if (msg.role === "user") {
 			if (typeof msg.content === "string") {
 				messages.push({
+					...messageType,
 					role: "user",
 					content: [{ type: "input_text", text: sanitizeSurrogates(msg.content) }],
 				});
@@ -265,6 +267,7 @@ export function convertResponsesMessages<TApi extends Api>(
 				});
 				if (content.length === 0) continue;
 				messages.push({
+					...messageType,
 					role: "user",
 					content,
 				});

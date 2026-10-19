@@ -449,6 +449,22 @@ describe("AI Providers Unicode Surrogate Pair Tests", () => {
 		);
 	});
 
+	describe.skipIf(!process.env.ABSTRACT_API_KEY)("Abstract Provider Unicode Handling", () => {
+		const llm = getModel("abstract", "deepseek-v4-flash:superfast");
+
+		it("should handle emoji in tool results", { retry: 3, timeout: 30000 }, async () => {
+			await testEmojiInToolResults(llm);
+		});
+
+		it("should handle real-world LinkedIn comment data with emoji", { retry: 3, timeout: 30000 }, async () => {
+			await testRealWorldLinkedInData(llm);
+		});
+
+		it("should handle unpaired high surrogate (0xD83D) in tool results", { retry: 3, timeout: 30000 }, async () => {
+			await testUnpairedHighSurrogate(llm);
+		});
+	});
+
 	describe.skipIf(!process.env.XAI_API_KEY)("xAI Provider Unicode Handling", () => {
 		const llm = getModel("xai", "grok-4.3");
 

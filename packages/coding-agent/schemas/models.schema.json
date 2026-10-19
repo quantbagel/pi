@@ -1046,6 +1046,11 @@
           "description": "Whether the provider accepts max_output_tokens. Some Codex-protocol gateways reject it.",
           "default": true
         },
+        "requiresMessageType": {
+          "type": "boolean",
+          "description": "Whether user, system, and developer input messages need an explicit type: \"message\". Some Responses-compatible servers reject messages that carry only a role.",
+          "default": false
+        },
         "supportsEagerToolInputStreaming": {
           "type": "boolean",
           "description": "Whether the provider accepts per-tool eager_input_streaming. When false, the Anthropic provider omits tools[].eager_input_streaming and sends the legacy fine-grained-tool-streaming-2025-05-14 beta header for tool-enabled requests.",

@@ -3118,6 +3118,63 @@ async function generateModels() {
 	];
 	allModels.push(...antLingModels);
 
+	// Abstract serves these lanes on its Responses API only; its /v1/chat/completions route
+	// serves robot action models. Prices are Abstract's published per-token rates. The
+	// upstream context is 1M tokens, but requests are capped at 2 MiB of JSON, so the
+	// context window stays well below that byte limit. max_output_tokens is capped at 65536.
+	const ABSTRACT_BASE_URL = "https://api.abstract.inc/v1";
+	const abstractCompat: OpenAIResponsesCompat = { supportsLongCacheRetention: false, requiresMessageType: true };
+	const abstractThinkingLevelMap = {
+		off: "none",
+		minimal: null,
+		low: "low",
+		medium: null,
+		high: "high",
+		xhigh: null,
+		max: "max",
+	} as const;
+	const abstractModel = (
+		id: string,
+		name: string,
+		cost: ModelCost,
+		thinkingLevelMap: Model<"openai-responses">["thinkingLevelMap"],
+	): Model<"openai-responses"> => ({
+		id,
+		name,
+		api: "openai-responses",
+		baseUrl: ABSTRACT_BASE_URL,
+		provider: "abstract",
+		reasoning: true,
+		thinkingLevelMap,
+		input: ["text"],
+		cost,
+		contextWindow: 262144,
+		maxTokens: 65536,
+		compat: abstractCompat,
+	});
+	const abstractModels = [
+		abstractModel(
+			"glm-5.3:superfast",
+			"GLM-5.3 (Superfast)",
+			{ input: 1.19, output: 4.4, cacheRead: 0.26, cacheWrite: 0 },
+			abstractThinkingLevelMap,
+		),
+		abstractModel(
+			"deepseek-v4-flash:superfast",
+			"DeepSeek V4 Flash (Superfast)",
+			{ input: 0.1, output: 0.25, cacheRead: 0.05, cacheWrite: 0 },
+			abstractThinkingLevelMap,
+		),
+		// Kimi K3 accepts only none, high, and max.
+		abstractModel(
+			"kimi-k3:superfast",
+			"Kimi K3 (Superfast)",
+			{ input: 3, output: 12.75, cacheRead: 0.3, cacheWrite: 0 },
+			{ ...abstractThinkingLevelMap, low: null },
+		),
+	];
+	allModels.push(...abstractModels);
+
 	for (const candidate of allModels) {
 		if (
 			candidate.api === "openai-completions" &&

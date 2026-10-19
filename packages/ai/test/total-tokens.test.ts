@@ -240,6 +240,29 @@ describe("totalTokens field", () => {
 	});
 
 	// =========================================================================
+	// Abstract
+	// =========================================================================
+
+	describe.skipIf(!process.env.ABSTRACT_API_KEY)("Abstract", () => {
+		it(
+			"deepseek-v4-flash:superfast - should return totalTokens equal to sum of components",
+			{ retry: 3, timeout: 60000 },
+			async () => {
+				const llm = getModel("abstract", "deepseek-v4-flash:superfast");
+
+				console.log(`\nAbstract / ${llm.id}:`);
+				const { first, second } = await testTotalTokensWithCache(llm, { apiKey: process.env.ABSTRACT_API_KEY });
+
+				logUsage("First request", first);
+				logUsage("Second request", second);
+
+				assertTotalTokensEqualsComponents(first);
+				assertTotalTokensEqualsComponents(second);
+			},
+		);
+	});
+
+	// =========================================================================
 	// xAI
 	// =========================================================================
 

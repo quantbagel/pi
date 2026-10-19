@@ -409,6 +409,13 @@ export const OpenAIResponsesCompatSchema = Type.Object(
 				default: true,
 			}),
 		),
+		requiresMessageType: Type.Optional(
+			Type.Boolean({
+				description:
+					'Whether user, system, and developer input messages need an explicit type: "message". Some Responses-compatible servers reject messages that carry only a role.',
+				default: false,
+			}),
+		),
 	},
 	{ description: "Compatibility settings for OpenAI Responses APIs.", additionalProperties: true },
 );
